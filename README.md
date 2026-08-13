@@ -1,5 +1,5 @@
 # VariantExplainAI
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21911929.svg)](https://doi.org/10.5281/zenodo.21911929)
 ## An Explainability-Driven k-Mer CNN-Sparse Transformer Framework for ClinVar-Based Pathogenicity Prediction
 
 VariantExplainAI is a research-oriented deep learning framework for **allele-specific genomic variant pathogenicity prediction** using ClinVar data.
