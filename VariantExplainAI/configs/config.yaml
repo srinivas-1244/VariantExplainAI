@@ -1,0 +1,39 @@
+seed: 42
+paths:
+  clinvar_vcf: data/raw/clinvar/clinvar.vcf.gz
+  grch38_fasta: data/raw/grch38/GRCh38.fa
+  gencode_gtf: data/raw/gencode/gencode.gtf
+  processed_csv: data/processed/variants.csv
+  split_dir: data/splits
+model:
+  half_window: 1000
+  kmer_size: 5
+  embedding_dim: 128
+  hidden_dim: 256
+  cnn_filters: [128, 256]
+  cnn_kernels: [5, 3]
+  transformer_layers: 4
+  attention_heads: 8
+  ff_dim: 512
+  local_radius: 64
+  global_stride: 32
+  dropout: 0.20
+  num_classes: 2
+training:
+  batch_size: 64
+  epochs: 80
+  learning_rate: 0.0001
+  min_learning_rate: 0.000001
+  weight_decay: 0.0001
+  patience: 10
+  grad_clip: 1.0
+  alignment_weight: 0.20
+  ig_steps_train: 8
+  ig_every_n_batches: 1
+  num_workers: 0
+  device: auto
+  threshold: 0.50
+explainability:
+  ig_steps_eval: 50
+  alignment_radius_tokens: 10
+  topk_fraction: 0.10
