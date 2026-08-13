@@ -1,199 +1,197 @@
-VariantExplainAI
-
-An Explainability-Driven k-Mer CNN-Sparse Transformer Framework for ClinVar-Based Pathogenicity Prediction
-
-
-
-
-
-VariantExplainAI is a research-oriented deep learning framework for allele-specific genomic variant pathogenicity prediction using ClinVar data.
-
-Table of Contents
-
-Overview
-
-Proposed Architecture
-
-Main Contributions
-
-Repository Structure
-
-Dataset
-
-Required Genomic Resources
-
-Data Preprocessing
-
-Reference and Alternate Haplotype Construction
-
-k-mer Tokenization
-
-Allele-Aware Representation
-
-VarMotif-TransNet
-
-Pathogenicity Classification
-
-Training Objective
-
-Explainability
-
-Explanation Alignment
-
-Training Configuration
-
-Installation
-
-Main Dependencies
-
-Configuration
-
-Dataset Preparation
-
-Training VariantExplainAI
-
-Model Outputs
-
-Performance Metrics
-
-Baseline Experiments
-
-Ablation Experiments
-
-Gene-Wise Generalization
-
-Temporal Generalization
-
-Class-Imbalance Experiments
-
-Explainability Analysis
-
-Perturbation Faithfulness
-
-Statistical Testing
-
-Variant Subgroup Evaluation
-
-Comparison with Established Predictors
-
-Reproducibility
-
-Synthetic Smoke Testing
-
-Recommended Full Experimental Workflow
-
-Hardware
-
-Important Scientific Note
-
-Implementation Philosophy
-
-Citation
-
-License
-
-Disclaimer
-
-1. Overview
-
-VariantExplainAI is a research-oriented deep learning framework for allele-specific genomic variant pathogenicity prediction using ClinVar data. The implementation combines paired reference/alternate haplotype modeling, overlapping k-mer sequence representation, convolutional motif extraction, sparse transformer-based long-range contextual learning, and explainability-guided optimization.
-
-The proposed model, VarMotif-TransNet, is designed to distinguish pathogenic and benign genomic variants while explicitly preserving the molecular consequence of the REF-to-ALT allele transformation.
-
-Paired reference and alternate genomic haplotypes
-
-Explicit REF-to-ALT allele-difference representation
-
-Overlapping 5-mer tokenization
-
-Shared trainable k-mer embeddings
-
-Variant metadata and positional encoding
-
-Two-layer 1D-CNN motif extractor
-
-Sparse multi-head self-attention
-
-Local and strided-global contextual modeling
-
-Variant-aware global attention
-
-Binary pathogenicity classification
-
-Integrated Gradients-based attribution
-
-Attention rollout
-
-Explanation-alignment regularization
-
-Perturbation-based explanation-faithfulness evaluation
-
-2. Proposed Architecture
-
-The complete processing pipeline is:
-
+# VariantExplainAI
+
+## An Explainability-Driven k-Mer CNN-Sparse Transformer Framework for ClinVar-Based Pathogenicity Prediction
+
+VariantExplainAI is a research-oriented deep learning framework for **allele-specific genomic variant pathogenicity prediction** using ClinVar data.
+
+The framework combines:
+
+* Paired reference/alternate haplotype modeling
+* Overlapping k-mer sequence representation
+* Convolutional motif extraction
+* Sparse Transformer-based long-range contextual learning
+* Variant-aware feature fusion
+* Integrated Gradients
+* Attention Rollout
+* Explanation-alignment regularization
+* Perturbation-based explanation-faithfulness evaluation
+
+The proposed model, **VarMotif-TransNet**, is designed to distinguish pathogenic and benign genomic variants while explicitly preserving the molecular consequence of the **REF-to-ALT allele transformation**.
+
+---
+
+## Table of Contents
+
+* [Overview](#overview)
+* [Proposed Architecture](#proposed-architecture)
+* [Main Contributions](#main-contributions)
+* [Repository Structure](#repository-structure)
+* [Dataset](#dataset)
+* [Required Genomic Resources](#required-genomic-resources)
+* [Data Preprocessing](#data-preprocessing)
+* [Reference and Alternate Haplotype Construction](#reference-and-alternate-haplotype-construction)
+* [k-mer Tokenization](#k-mer-tokenization)
+* [Allele-Aware Representation](#allele-aware-representation)
+* [VarMotif-TransNet](#varmotif-transnet)
+* [Pathogenicity Classification](#pathogenicity-classification)
+* [Training Objective](#training-objective)
+* [Explainability](#explainability)
+* [Training Configuration](#training-configuration)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Dataset Preparation](#dataset-preparation)
+* [Training](#training)
+* [Model Outputs](#model-outputs)
+* [Performance Metrics](#performance-metrics)
+* [Baseline Experiments](#baseline-experiments)
+* [Ablation Experiments](#ablation-experiments)
+* [Gene-Wise Generalization](#gene-wise-generalization)
+* [Temporal Generalization](#temporal-generalization)
+* [Class-Imbalance Experiments](#class-imbalance-experiments)
+* [Explainability Analysis](#explainability-analysis)
+* [Perturbation Faithfulness](#perturbation-faithfulness)
+* [Statistical Testing](#statistical-testing)
+* [Variant Subgroup Evaluation](#variant-subgroup-evaluation)
+* [Comparison with Established Predictors](#comparison-with-established-predictors)
+* [Reproducibility](#reproducibility)
+* [Synthetic Smoke Testing](#synthetic-smoke-testing)
+* [Recommended Experimental Workflow](#recommended-experimental-workflow)
+* [Hardware](#hardware)
+* [Important Scientific Note](#important-scientific-note)
+* [Citation](#citation)
+* [License](#license)
+* [Disclaimer](#disclaimer)
+
+---
+
+# Overview
+
+VariantExplainAI provides an explainability-driven deep learning pipeline for genomic variant pathogenicity prediction.
+
+The framework processes both **reference and alternate genomic haplotypes** so that the model can learn the specific effect of a genomic alteration rather than simply memorizing genomic locations.
+
+### Key Features
+
+* Allele-specific representation
+* Separate REF and ALT haplotypes
+* Explicit allele-difference encoding
+* Overlapping 5-mer tokenization
+* Shared trainable k-mer embeddings
+* Variant metadata and positional encoding
+* Two-layer 1D-CNN motif extraction
+* Sparse multi-head self-attention
+* Local and strided-global contextual modeling
+* Variant-aware global attention
+* Binary pathogenicity classification
+* Integrated Gradients explanations
+* Attention Rollout
+* Explanation-alignment regularization
+* Perturbation-based explanation validation
+
+---
+
+# Proposed Architecture
+
+The complete VariantExplainAI processing pipeline is:
+
+```text
 ClinVar Variant
-↓
+      │
+      ▼
 Variant Filtering and Normalization
-↓
+      │
+      ▼
 GRCh38 Reference Validation
-↓
+      │
+      ▼
 Reference and Alternate Haplotype Construction
-↓
+      │
+      ▼
 Overlapping k-mer Tokenization
-↓
+      │
+      ▼
 Shared k-mer Embeddings
-↓
-Reference Embedding E_ref
-Alternate Embedding E_alt
-Allele Difference D = E_alt - E_ref
-↓
+      │
+      ├───────────────┐
+      ▼               ▼
+E_ref             E_alt
+      │               │
+      └───────┬───────┘
+              ▼
+      D = E_alt - E_ref
+              │
+              ▼
 Variant Metadata + Positional Information
-↓
+              │
+              ▼
 Allele-Aware Feature Fusion
-↓
+              │
+              ▼
 Two-Layer 1D-CNN
-↓
+              │
+              ▼
 Sparse Transformer Encoder
-↓
+              │
+              ▼
 Contextual CLS Representation
-↓
+              │
+              ▼
 Pathogenicity Classification
-↓
+              │
+              ▼
 Benign / Pathogenic Probability
+```
 
-The framework additionally generates token-level explanations using Integrated Gradients and attention rollout.
+The framework additionally generates token-level explanations using **Integrated Gradients** and **Attention Rollout**.
 
-3. Main Contributions
+---
 
+# Main Contributions
 
+### 1. Allele-Specific Representation
 
-   **Allele-Specific Representation:** Reference and alternate haplotypes are constructed separately so that variants occurring at the same genomic locus but having different alternate alleles remain distinguishable.
+Reference and alternate haplotypes are constructed separately so that variants occurring at the same genomic locus but having different alternate alleles remain distinguishable.
 
+### 2. Allele-Difference Encoding
 
+The framework explicitly calculates:
 
-   **Allele-Difference Encoding:** The model explicitly computes D = E_alt - E_ref to represent sequence changes introduced by the alternate allele.
+```text
+D = E_alt - E_ref
+```
 
+This representation captures the sequence changes introduced by the alternate allele.
 
+### 3. CNN-Based Motif Learning
 
-   **CNN-Based Motif Learning:** Two one-dimensional convolutional layers capture short-range allele-dependent genomic motifs.
+Two one-dimensional convolutional layers capture short-range allele-dependent genomic motifs.
 
+### 4. Sparse Long-Range Attention
 
+The Transformer combines:
 
-   **Sparse Long-Range Attention:** A custom sparse transformer combines local attention, strided global attention, CLS-token global connectivity, and variant-overlapping global connectivity.
+* Local attention
+* Strided global attention
+* CLS-token global connectivity
+* Variant-overlapping global connectivity
 
+### 5. Explainability-Guided Learning
 
+Explanation alignment encourages attribution patterns to remain consistent with biologically relevant variant-centered regions.
 
-   **Explainability-Guided Learning:** Explanation alignment encourages attribution patterns to remain consistent with biologically relevant variant-centered regions.
+### 6. Independent Explanation Validation
 
+Model explanations can be evaluated through:
 
+* Biological annotation overlap
+* Attribution stability
+* Controlled perturbation experiments
 
-   **Independent Explanation Validation:** Model explanations can be evaluated using biological annotation overlap, attribution stability, and controlled perturbation experiments.
+---
 
-4. Repository Structure
+# Repository Structure
 
-The repository is organized into configuration, data, source-code, experiment, output, and testing components:
-
+```text
 VariantExplainAI/
 │
 ├── configs/
@@ -204,6 +202,7 @@ VariantExplainAI/
 │   │   ├── clinvar/
 │   │   ├── grch38/
 │   │   └── gencode/
+│   │
 │   ├── processed/
 │   └── splits/
 │
@@ -226,813 +225,997 @@ VariantExplainAI/
 │   └── run_perturbation.py
 │
 ├── outputs/
+│
 ├── tests/
 │
 ├── requirements.txt
 ├── IMPLEMENTATION_NOTES.md
 └── README.md
+```
 
-Directory Description
+## Directory Description
 
-Directory / File
+| Directory / File          | Purpose                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| `configs/`                | Experiment and model configuration                                           |
+| `configs/config.yaml`     | Main configuration for sequence processing, model architecture, and training |
+| `data/raw/clinvar/`       | Raw ClinVar resources                                                        |
+| `data/raw/grch38/`        | GRCh38 reference genome resources                                            |
+| `data/raw/gencode/`       | GENCODE GRCh38 annotation resources                                          |
+| `data/processed/`         | Preprocessed and normalized datasets                                         |
+| `data/splits/`            | Train, validation, and test partitions                                       |
+| `src/data/`               | Data loading, filtering, normalization, tokenization, and preprocessing      |
+| `src/models/`             | VarMotif-TransNet and related models                                         |
+| `src/explainability/`     | Integrated Gradients, Attention Rollout, and attribution utilities           |
+| `src/training/`           | Training loops, losses, optimization, checkpointing, and scheduling          |
+| `src/evaluation/`         | Evaluation metrics and analysis                                              |
+| `src/utils/`              | Shared utility functions                                                     |
+| `experiments/`            | Training and experimental scripts                                            |
+| `outputs/`                | Checkpoints, predictions, metrics, figures, and logs                         |
+| `tests/`                  | Software and pipeline tests                                                  |
+| `requirements.txt`        | Python dependencies                                                          |
+| `IMPLEMENTATION_NOTES.md` | Additional implementation notes                                              |
+| `README.md`               | Project documentation                                                        |
 
-Purpose
+---
 
-configs/
+# Dataset
 
-Stores experiment and model configuration files.
+VariantExplainAI is primarily designed for variants obtained from **ClinVar**.
 
-configs/config.yaml
+The analytical workflow supports the following clinical-significance classes:
 
-Main configuration for sequence processing, model architecture, and training.
+```text
+Pathogenic
+Likely Pathogenic
+Benign
+Likely Benign
+```
 
-data/raw/clinvar/
+For binary classification:
 
-Raw ClinVar variant resources.
-
-data/raw/grch38/
-
-GRCh38 reference genome resources.
-
-data/raw/gencode/
-
-GENCODE GRCh38 annotation resources.
-
-data/processed/
-
-Preprocessed and normalized datasets.
-
-data/splits/
-
-Stored train, validation, and test partitions.
-
-src/data/
-
-Data loading, filtering, normalization, tokenization, and preprocessing modules.
-
-src/models/
-
-VarMotif-TransNet and related model implementations.
-
-src/explainability/
-
-Integrated Gradients, attention rollout, attribution alignment, and explanation utilities.
-
-src/training/
-
-Training loops, losses, optimization, checkpointing, and scheduling.
-
-src/evaluation/
-
-Evaluation metrics and analysis utilities.
-
-src/utils/
-
-Shared helper functions and utilities.
-
-experiments/
-
-Executable scripts for training, baselines, ablations, holdout studies, imbalance analysis, explainability, and perturbation experiments.
-
-outputs/
-
-Generated checkpoints, predictions, metrics, figures, and logs.
-
-tests/
-
-Software and pipeline tests.
-
-requirements.txt
-
-Python dependencies.
-
-IMPLEMENTATION_NOTES.md
-
-Additional implementation and research notes.
-
-README.md
-
-Project documentation.
-
-5. Dataset
-
-The framework is designed primarily for variants obtained from ClinVar. The analytical workflow supports Pathogenic, Likely Pathogenic, Benign, and Likely Benign clinical-significance classes.
-
+```text
 Pathogenic = Pathogenic + Likely Pathogenic
-Benign     = Benign + Likely Benign
 
-Single nucleotide variants (SNVs)
+Benign = Benign + Likely Benign
+```
 
-Short insertions
+## Supported Variant Types
 
-Short deletions
+* Single nucleotide variants (SNVs)
+* Short insertions
+* Short deletions
 
 Large structural variants and unresolved genomic variants should be excluded before sequence modeling.
 
-6. Required Genomic Resources
+---
 
-ClinVar
+# Required Genomic Resources
 
-Variant coordinates
+## ClinVar
 
-REF/ALT alleles
+Required information includes:
 
-Clinical significance
+* Variant coordinates
+* REF/ALT alleles
+* Clinical significance
+* Review status
+* Variant identifiers
 
-Review status
+## GRCh38
 
-Variant identifiers
+Used for:
 
-GRCh38
+* Reference-allele validation
+* Sequence-window extraction
+* Reference haplotype generation
 
-Reference-allele validation
+## GENCODE GRCh38
 
-Sequence-window extraction
+Used for:
 
-Reference haplotype generation
+* Gene annotation
+* Coding-region identification
+* Splice-region annotation
+* Non-coding context annotation
 
-GENCODE GRCh38
+---
 
-Gene annotation
+# Data Preprocessing
 
-Coding-region identification
+The preprocessing pipeline is:
 
-Splice-region annotation
-
-Non-coding context annotation
-
-7. Data Preprocessing
-
+```text
 ClinVar Records
-↓
+      │
+      ▼
 Target Clinical Significance Filtering
-↓
+      │
+      ▼
 Conflict Removal
-↓
+      │
+      ▼
 Review Status Filtering
-↓
+      │
+      ▼
 SNV / Short-Indel Selection
-↓
+      │
+      ▼
 Multi-Allelic Decomposition
-↓
+      │
+      ▼
 Variant Normalization
-↓
+      │
+      ▼
 GRCh38 REF Validation
-↓
+      │
+      ▼
 Duplicate Removal
-↓
+      │
+      ▼
 Binary Label Mapping
+```
 
-Each normalized variant should have a unique identifier of the form:
+Each normalized variant should have a unique identifier:
 
+```text
 chromosome-position-reference-alternate
+```
 
-8. Reference and Alternate Haplotype Construction
+---
 
-For each variant, approximately ±1000 bp of sequence context is extracted from GRCh38. Two allele-specific genomic sequences are constructed: S_ref and S_alt. S_ref contains the original reference allele, whereas S_alt is constructed by applying the normalized REF-to-ALT transformation.
+# Reference and Alternate Haplotype Construction
 
-For insertions and deletions, cropping or padding is applied to maintain consistent sequence length across samples.
+For every variant, approximately **±1000 bp** of sequence context is extracted from GRCh38.
 
-Variant type
-REF length
-ALT length
+Two allele-specific sequences are constructed:
+
+```text
+S_ref
+S_alt
+```
+
+### Reference Haplotype
+
+`S_ref` contains the original reference allele.
+
+### Alternate Haplotype
+
+`S_alt` is generated by applying the normalized REF-to-ALT transformation.
+
+For insertions and deletions, cropping or padding is applied to maintain consistent sequence length.
+
+Additional variant information includes:
+
+```text
+Variant Type
+REF Length
+ALT Length
 ΔL = |ALT| - |REF|
-Variant-position indicator
+Variant Position Indicator
+```
 
-9. k-mer Tokenization
+---
 
-VariantExplainAI uses overlapping k-mers with k = 5 and stride = 1. The theoretical canonical nucleotide vocabulary contains 4^5 = 1024 possible 5-mers, with additional reserved tokens available for ambiguous or padded positions.
+# k-mer Tokenization
 
-Reference and alternate sequences use the same tokenizer and shared embedding layer.
+VariantExplainAI uses overlapping **5-mers** with:
 
-10. Allele-Aware Representation
+```text
+k = 5
+stride = 1
+```
 
-For each token position, the model generates E_ref and E_alt and explicitly computes:
+The theoretical canonical nucleotide vocabulary contains:
 
+```text
+4^5 = 1024
+```
+
+possible 5-mers.
+
+Additional reserved tokens can be used for ambiguous or padded positions.
+
+The reference and alternate sequences use the same tokenizer and shared embedding layer.
+
+---
+
+# Allele-Aware Representation
+
+The model generates separate embeddings:
+
+```text
+E_ref
+E_alt
+```
+
+The explicit allele-difference representation is:
+
+```text
 D = E_alt - E_ref
+```
 
-These representations are combined with positional encoding, variant-position information, variant type, REF length, ALT length, and allele-length difference, then projected into the model hidden dimension.
+These representations are combined with:
 
-11. VarMotif-TransNet
+* Positional encoding
+* Variant-position information
+* Variant type
+* REF length
+* ALT length
+* Allele-length difference
 
-11.1 Motif-Aware 1D-CNN
+The combined representation is then projected into the model hidden dimension.
 
-Conv1D (kernel = 5, filters = 128)
-↓
+---
+
+# VarMotif-TransNet
+
+## Motif-Aware 1D-CNN
+
+The CNN module contains:
+
+```text
+Conv1D
+Kernel = 5
+Filters = 128
+        │
+        ▼
 BatchNorm
-↓
+        │
+        ▼
 ReLU
-↓
-Conv1D (kernel = 3, filters = 256)
-↓
+        │
+        ▼
+Conv1D
+Kernel = 3
+Filters = 256
+        │
+        ▼
 BatchNorm
-↓
+        │
+        ▼
 ReLU
+```
 
 Same-length padding preserves genomic positional correspondence.
 
-11.2 Sparse Transformer Encoder
+---
 
-Parameter
+# Sparse Transformer Encoder
 
-Setting
+The Transformer configuration is:
 
-Transformer layers
+| Parameter               |   Setting |
+| ----------------------- | --------: |
+| Transformer Layers      |         4 |
+| Attention Heads         |         8 |
+| Hidden Dimension        |       256 |
+| Feed-Forward Dimension  |       512 |
+| Local Attention Radius  | 64 tokens |
+| Global Attention Stride | 32 tokens |
+| Dropout                 |      0.20 |
 
-4
+The sparse attention mechanism combines local and global contextual information while reducing unnecessary dense attention computation.
 
-Attention heads
+---
 
-8
+# Pathogenicity Classification
 
-Hidden dimension
+The final classification pipeline is:
 
-256
-
-Feed-forward dimension
-
-512
-
-Local radius
-
-64 tokens
-
-Global stride
-
-32 tokens
-
-Dropout
-
-0.20
-
-12. Pathogenicity Classification
-
+```text
 CLS Representation
-↓
+       │
+       ▼
 Linear Projection
-↓
+       │
+       ▼
 Softmax
-↓
-Benign Probability / Pathogenic Probability
+       │
+       ├──► Benign Probability
+       │
+       └──► Pathogenic Probability
+```
 
-Pathogenic is treated as the positive class. The default classification threshold is 0.50.
+**Pathogenic** is treated as the positive class.
 
-13. Training Objective
+Default classification threshold:
 
-The primary classification objective uses class-weighted cross-entropy. The complete loss is:
+```text
+0.50
+```
 
+---
+
+# Training Objective
+
+The primary classification objective uses class-weighted cross-entropy.
+
+The total loss is:
+
+```text
 L_total = L_cls + λ_align × L_align
+```
+
+where:
+
+```text
 λ_align = 0.20
+```
 
-L_cls is the pathogenicity classification loss and L_align is the explanation-alignment loss.
+* `L_cls` = pathogenicity classification loss
+* `L_align` = explanation-alignment loss
 
-14. Explainability
+---
 
-Integrated Gradients
+# Explainability
 
-Integrated Gradients is the primary attribution method and produces position-wise importance scores a = [a1, a2, ..., am] representing the contribution of genomic token positions to the predicted class.
+VariantExplainAI uses two complementary explanation approaches.
 
-Attention Rollout
+## Integrated Gradients
 
-Transformer attention matrices are recursively aggregated to estimate the influence of genomic positions on the final contextual representation. Attention rollout is intended as a complementary explanation rather than a replacement for Integrated Gradients.
+Integrated Gradients is the primary attribution method.
 
-15. Explanation Alignment
+It produces position-wise importance scores:
 
-A variant-centered target mask is constructed around the normalized variant locus. The attribution distribution is normalized and compared with the target mask using a cosine-distance alignment objective. This regularization encourages the model to use biologically plausible variant-centered evidence while retaining the primary classification objective.
+```text
+a = [a1, a2, ..., am]
+```
 
-16. Training Configuration
+These scores represent the contribution of genomic token positions to the predicted class.
 
-Parameter
+## Attention Rollout
 
-Setting
+Attention Rollout recursively aggregates Transformer attention matrices to estimate the influence of genomic positions on the final contextual representation.
 
-Reference context
+Attention Rollout is used as a complementary explanation rather than a replacement for Integrated Gradients.
 
-±1000 bp
+---
 
-k-mer size
+# Explanation Alignment
 
-5
+A variant-centered target mask is constructed around the normalized variant locus.
 
-k-mer stride
+The attribution distribution is normalized and compared with the target mask using a cosine-distance alignment objective.
 
-1
+This regularization encourages the model to use biologically plausible variant-centered evidence while retaining the primary classification objective.
 
-Embedding dimension
+---
 
-128
+# Training Configuration
 
-Hidden dimension
+| Parameter               |  Setting |
+| ----------------------- | -------: |
+| Reference Context       | ±1000 bp |
+| k-mer Size              |        5 |
+| k-mer Stride            |        1 |
+| Embedding Dimension     |      128 |
+| Hidden Dimension        |      256 |
+| CNN Filters             | 128, 256 |
+| CNN Kernels             |     5, 3 |
+| Transformer Layers      |        4 |
+| Attention Heads         |        8 |
+| FFN Dimension           |      512 |
+| Local Attention Radius  |       64 |
+| Global Attention Stride |       32 |
+| Dropout                 |     0.20 |
+| Optimizer               |    AdamW |
+| Initial Learning Rate   |     1e-4 |
+| Minimum Learning Rate   |     1e-6 |
+| Weight Decay            |     1e-4 |
+| Batch Size              |       64 |
+| Maximum Epochs          |       80 |
+| Early Stopping Patience |       10 |
+| Gradient Clipping       |      1.0 |
+| Alignment Loss Weight   |     0.20 |
+| Random Seed             |       42 |
 
-256
+---
 
-CNN filters
+# Installation
 
-128, 256
+## 1. Clone the Repository
 
-CNN kernels
-
-5, 3
-
-Transformer layers
-
-4
-
-Attention heads
-
-8
-
-FFN dimension
-
-512
-
-Local attention radius
-
-64
-
-Global attention stride
-
-32
-
-Dropout
-
-0.20
-
-Optimizer
-
-AdamW
-
-Initial learning rate
-
-1e-4
-
-Minimum learning rate
-
-1e-6
-
-Weight decay
-
-1e-4
-
-Batch size
-
-64
-
-Maximum epochs
-
-80
-
-Early-stopping patience
-
-10
-
-Gradient clipping
-
-1.0
-
-Alignment-loss weight
-
-0.20
-
-Random seed
-
-42
-
-17. Installation
-
-Clone the repository:
-
+```bash
 git clone <repository-url>
- cd VariantExplainAI
+cd VariantExplainAI
+```
 
-Create a virtual environment:
+## 2. Create a Virtual Environment
 
+```bash
 python -m venv venv
+```
 
-Activate on Linux/macOS:
+### Linux / macOS
 
+```bash
 source venv/bin/activate
+```
 
-Activate on Windows:
+### Windows
 
+```bash
 venv\Scripts\activate
+```
 
-Install dependencies:
+## 3. Install Dependencies
 
+```bash
 pip install -r requirements.txt
+```
 
-18. Main Dependencies
+---
 
-Python
+# Main Dependencies
 
-PyTorch
+The project uses:
 
-NumPy
-
-Pandas
-
-scikit-learn
-
-SciPy
-
-Matplotlib
-
-PyYAML
-
-Captum
+* Python
+* PyTorch
+* NumPy
+* Pandas
+* scikit-learn
+* SciPy
+* Matplotlib
+* PyYAML
+* Captum
 
 A CUDA-enabled NVIDIA GPU is strongly recommended for full-scale training.
 
-19. Configuration
+---
 
-Experiment parameters are maintained in configs/config.yaml. Users can modify dataset locations and experimental settings without changing the main source code.
+# Configuration
 
+Experiment parameters are maintained in:
+
+```text
+configs/config.yaml
+```
+
+Example configuration:
+
+```yaml
 seed: 42
 
- sequence:
-   context_radius: 1000
-   kmer_size: 5
-   stride: 1
+sequence:
+  context_radius: 1000
+  kmer_size: 5
+  stride: 1
 
- model:
-   embedding_dim: 128
-   hidden_dim: 256
-   transformer_layers: 4
-   attention_heads: 8
-   ffn_dim: 512
-   dropout: 0.20
-   local_radius: 64
-   global_stride: 32
+model:
+  embedding_dim: 128
+  hidden_dim: 256
+  transformer_layers: 4
+  attention_heads: 8
+  ffn_dim: 512
+  dropout: 0.20
+  local_radius: 64
+  global_stride: 32
 
- training:
-   batch_size: 64
-   max_epochs: 80
-   learning_rate: 0.0001
-   min_learning_rate: 0.000001
-   weight_decay: 0.0001
-   early_stopping_patience: 10
-   gradient_clip: 1.0
-   lambda_align: 0.20
+training:
+  batch_size: 64
+  max_epochs: 80
+  learning_rate: 0.0001
+  min_learning_rate: 0.000001
+  weight_decay: 0.0001
+  early_stopping_patience: 10
+  gradient_clip: 1.0
+  lambda_align: 0.20
+```
 
-20. Dataset Preparation
+Dataset locations and experiment parameters can be changed without modifying the main source code.
 
-Place the required input files under data/raw/ using the following organization:
+---
 
-data/raw/clinvar/
- data/raw/grch38/
- data/raw/gencode/
+# Dataset Preparation
 
-Run the preprocessing workflow before training. The preprocessing module performs ClinVar filtering, variant normalization, GRCh38 validation, REF/ALT haplotype construction, k-mer preparation, metadata encoding, and dataset partition generation.
+Place the required input resources under:
 
-Processed data are stored under data/processed/ and partition information under data/splits/.
+```text
+data/raw/
+├── clinvar/
+├── grch38/
+└── gencode/
+```
 
-21. Training VariantExplainAI
+Run the preprocessing workflow before training.
 
-Run the primary model using:
+The preprocessing workflow performs:
 
+1. ClinVar filtering
+2. Variant normalization
+3. GRCh38 validation
+4. REF/ALT haplotype construction
+5. k-mer preparation
+6. Metadata encoding
+7. Dataset partition generation
+
+Processed data are stored under:
+
+```text
+data/processed/
+```
+
+Partition information is stored under:
+
+```text
+data/splits/
+```
+
+---
+
+# Training VariantExplainAI
+
+Run the primary model with:
+
+```bash
 python experiments/train_main.py
+```
 
-Dataset loading
-       ↓
- Allele-aware representation
-       ↓
- VarMotif-TransNet forward propagation
-       ↓
- Classification loss
-       ↓
- Explanation alignment
-       ↓
- Backpropagation
-       ↓
- Validation AUROC monitoring
-       ↓
- Best-checkpoint selection
+Training workflow:
 
-22. Model Outputs
+```text
+Dataset Loading
+      ↓
+Allele-Aware Representation
+      ↓
+VarMotif-TransNet Forward Propagation
+      ↓
+Classification Loss
+      ↓
+Explanation Alignment
+      ↓
+Backpropagation
+      ↓
+Validation AUROC Monitoring
+      ↓
+Best Checkpoint Selection
+```
 
-Generated files are stored under outputs/:
+---
 
-outputs/checkpoints/
- outputs/predictions/
- outputs/metrics/
- outputs/figures/
- outputs/logs/
+# Model Outputs
+
+Generated files are stored under:
+
+```text
+outputs/
+├── checkpoints/
+├── predictions/
+├── metrics/
+├── figures/
+└── logs/
+```
 
 The main prediction output contains fields such as:
 
+```text
 variant_id
- true_label
- predicted_label
- p_benign
- p_pathogenic
- variant_type
- gene
- region
+true_label
+predicted_label
+p_benign
+p_pathogenic
+variant_type
+gene
+region
+```
 
-23. Performance Metrics
+---
 
-Accuracy
+# Performance Metrics
 
-Precision
+VariantExplainAI supports:
 
-Recall
+* Accuracy
+* Precision
+* Recall
+* Specificity
+* F1-score
+* AUROC
+* AUPRC
+* Confusion Matrix
+* ROC Curve
+* Precision-Recall Curve
 
-Specificity
+The default threshold-dependent classification threshold is:
 
-F1-score
+```text
+0.50
+```
 
-AUROC
+AUROC and AUPRC are calculated from continuous pathogenicity probabilities.
 
-AUPRC
+---
 
-Confusion Matrix
-
-ROC Curve
-
-Precision-Recall Curve
-
-Threshold-dependent metrics use a default classification threshold of 0.50. AUROC and AUPRC are calculated from continuous pathogenicity probabilities.
-
-24. Baseline Experiments
+# Baseline Experiments
 
 Run:
 
+```bash
 python experiments/train_baselines.py
+```
 
-- Random Forest
+The baseline experiments include:
 
-- SVM-RBF
+* Random Forest
+* SVM-RBF
+* CNN-only
+* Transformer-only
+* Sparse Transformer-only
 
-- CNN-only
+Neural baselines use the same allele-aware sequence representation and stored data partitions whenever appropriate.
 
-- Transformer-only
+---
 
-- Sparse Transformer-only
-
-The neural baselines use the same allele-aware sequence representation and stored data partitions whenever appropriate.
-
-25. Ablation Experiments
+# Ablation Experiments
 
 Run:
 
+```bash
 python experiments/run_ablation.py
+```
 
-- Alternate allele representation
+The ablation study evaluates:
 
-- Allele-difference encoding
+* Alternate allele representation
+* Allele-difference encoding
+* Variant metadata
+* CNN motif extractor
+* Sparse Transformer
+* Sparse versus dense attention
+* Explanation alignment
+* Variant-global connectivity
+* Strided-global connectivity
 
-- Variant metadata
+These experiments quantify the contribution of individual components of the proposed architecture.
 
-- CNN motif extractor
+---
 
-- Sparse transformer
-
-- Sparse versus dense attention
-
-- Explanation alignment
-
-- Variant-global connectivity
-
-- Strided-global connectivity
-
-This allows individual contributions of the proposed architecture to be quantified.
-
-26. Gene-Wise Generalization
+# Gene-Wise Generalization
 
 Run:
 
+```bash
 python experiments/run_gene_holdout.py
+```
 
-Under this protocol, variants belonging to the same gene are restricted to a single partition. This evaluation helps determine whether the model generalizes to unseen genes rather than learning gene-specific sequence signatures.
+Under this protocol, variants belonging to the same gene are restricted to a single partition.
 
-27. Temporal Generalization
+This evaluation determines whether the model generalizes to **unseen genes** instead of learning gene-specific sequence signatures.
+
+---
+
+# Temporal Generalization
 
 Run:
 
+```bash
 python experiments/run_temporal_holdout.py
+```
 
-Earlier ClinVar data are used for model development, while newly introduced variants from a later release are reserved for testing. This protocol approximates prospective pathogenicity prediction.
+Earlier ClinVar data are used for model development, while newly introduced variants from a later release are reserved for testing.
 
-28. Class-Imbalance Experiments
+This protocol approximates prospective pathogenicity prediction.
+
+---
+
+# Class-Imbalance Experiments
 
 Run:
 
+```bash
 python experiments/run_imbalance.py
+```
 
-Pathogenic training ratios
+Pathogenic training ratios include:
+
+```text
 1:1
 1:2
 1:4
+```
 
-Only the training partition should be modified. Validation and test distributions remain unchanged.
+Only the training partition should be modified.
 
-29. Explainability Analysis
+Validation and test distributions remain unchanged.
+
+---
+
+# Explainability Analysis
 
 Run:
 
+```bash
 python experiments/run_explainability.py
+```
 
-- Integrated Gradients
+The analysis includes:
 
-- Attention Rollout
+* Integrated Gradients
+* Attention Rollout
+* Variant-centered attribution analysis
+* Biological annotation overlap
+* Top-k functional hit analysis
+* Attribution stability
 
-- Variant-centered attribution analysis
+---
 
-- Biological annotation overlap
-
-- Top-k functional hit analysis
-
-- Attribution stability
-
-30. Perturbation Faithfulness
+# Perturbation Faithfulness
 
 Run:
 
+```bash
 python experiments/run_perturbation.py
+```
 
-- Top-attribution masking
+Perturbation experiments include:
 
-- Variant-centered masking
+* Top-attribution masking
+* Variant-centered masking
+* Sequence-matched control masking
+* Random distal masking
+* REF/ALT perturbation
 
-- Sequence-matched control masking
+The confidence change is calculated as:
 
-- Random distal masking
-
-- REF/ALT perturbation
-
+```text
 ΔP = P(original) - P(perturbed)
+```
 
 Larger confidence drops indicate greater influence of the perturbed genomic region.
 
-31. Statistical Testing
+---
 
-Perturbation results can be compared using the Wilcoxon signed-rank test with Holm multiple-comparison correction. Confidence intervals can also be generated for perturbation-based effect estimates.
+# Statistical Testing
 
-32. Variant Subgroup Evaluation
+Perturbation results can be compared using:
 
-SNVs
+* Wilcoxon signed-rank test
+* Holm multiple-comparison correction
+* Confidence intervals for perturbation-based effect estimates
 
-Short indels
+---
 
-Coding variants
+# Variant Subgroup Evaluation
 
-Splice-region variants
+The framework supports evaluation across:
 
-Non-coding variants
+* SNVs
+* Short indels
+* Coding variants
+* Splice-region variants
+* Non-coding variants
 
-This permits assessment of model behavior across different biological variant contexts.
+This allows model behavior to be assessed across different biological variant contexts.
 
-33. Comparison with Established Predictors
+---
 
-The framework can support comparisons with external pathogenicity scores such as:
+# Comparison with Established Predictors
 
-CADD
+VariantExplainAI can support comparisons with established pathogenicity predictors, including:
 
-REVEL
+* CADD
+* REVEL
+* ClinPred
+* BayesDel
+* PrimateAI
+* EVE
+* AlphaMissense
+* SpliceAI
 
-ClinPred
+Comparisons should only be performed on variants supported by the corresponding external predictor.
 
-BayesDel
+The common eligible subset should therefore be used:
 
-PrimateAI
+```text
+VariantExplainAI predictions
+            ∩
+External predictor coverage
+```
 
-EVE
+This prevents unfair comparisons involving unsupported variant classes.
 
-AlphaMissense
+---
 
-SpliceAI
+# Reproducibility
 
-Comparisons should only be performed on variants supported by the corresponding external predictor. For each method, evaluation should therefore use the common eligible subset:
+VariantExplainAI emphasizes reproducible experimentation through:
 
-VariantExplainAI predictions ∩ External predictor coverage
+* Fixed random seed
+* Stored dataset partitions
+* Configuration files
+* Best-model checkpoints
+* Saved predictions
+* Experiment logs
+* Independent evaluation scripts
 
-This avoids unfair comparisons involving unsupported variant classes.
+Default random seed:
 
-34. Reproducibility
+```text
+42
+```
 
-Fixed random seed
+The same stored partitions should be used for:
 
-Stored dataset partitions
+* Main model
+* Baselines
+* Ablations
+* Explainability studies
+* Robustness experiments
 
-Configuration files
+---
 
-Best-model checkpoints
-
-Saved predictions
-
-Experiment logs
-
-Independent evaluation scripts
-
-Default seed: 42. The same stored partitions should be used for the main model, baselines, ablations, explainability studies, and robustness experiments.
-
-35. Synthetic Smoke Testing
+# Synthetic Smoke Testing
 
 The repository includes a lightweight synthetic-data pathway for checking the software installation without requiring the complete ClinVar dataset.
 
+The synthetic workflow can validate:
+
+```text
 Tokenization
-
-Dataset loading
-
-Tensor dimensions
-
-Model forward propagation
-
-Loss computation
-
+     ↓
+Dataset Loading
+     ↓
+Tensor Dimensions
+     ↓
+Model Forward Propagation
+     ↓
+Loss Computation
+     ↓
 Training
+     ↓
+Checkpoint Saving
+     ↓
+Metric Calculation
+     ↓
+Explainability Execution
+```
 
-Checkpoint saving
+> **Important:** Synthetic testing is intended only for software validation and should not be used for reporting scientific performance.
 
-Metric calculation
+---
 
-Explainability execution
+# Recommended Experimental Workflow
 
-Synthetic testing is intended only for software validation and not for reporting scientific performance.
+The recommended complete workflow is:
 
-36. Recommended Full Experimental Workflow
+```text
+1. Obtain ClinVar, GRCh38 and GENCODE resources
+                ↓
+2. Preprocess ClinVar records
+                ↓
+3. Normalize and validate variants
+                ↓
+4. Construct REF/ALT haplotypes
+                ↓
+5. Generate dataset splits
+                ↓
+6. Train VariantExplainAI
+                ↓
+7. Evaluate independent test performance
+                ↓
+8. Train internal baselines
+                ↓
+9. Perform ablation analysis
+                ↓
+10. Perform gene-wise holdout
+                ↓
+11. Perform temporal holdout
+                ↓
+12. Conduct class-imbalance experiments
+                ↓
+13. Generate Integrated Gradients explanations
+                ↓
+14. Generate Attention Rollout explanations
+                ↓
+15. Perform perturbation-faithfulness testing
+                ↓
+16. Conduct subgroup analysis
+                ↓
+17. Compare against external predictors
+                ↓
+18. Generate publication tables and figures
+```
 
-Obtain ClinVar, GRCh38 and GENCODE resources
+---
 
-Preprocess ClinVar records
+# Hardware
 
-Normalize and validate variants
+The intended full-scale implementation is suitable for CUDA-enabled GPU execution.
 
-Construct REF/ALT haplotypes
+The research configuration was designed around a GPU-class workstation comparable to:
 
-Generate dataset splits
+```text
+NVIDIA RTX 3090
+24 GB GPU Memory
+```
 
-Train VariantExplainAI
+Smaller configurations and synthetic experiments can be executed on lower-memory GPUs or CPU environments by reducing:
 
-Evaluate independent test performance
+* Batch size
+* Sequence dimensions
+* Model dimensions
 
-Train internal baselines
+---
 
-Perform ablation analysis
+# Important Scientific Note
 
-Perform gene-wise holdout
+VariantExplainAI is intended to implement the methodology reproducibly.
 
-Perform temporal holdout
+Reported performance values from a research manuscript should **not** be assumed to reproduce automatically.
 
-Conduct class-imbalance experiments
+Performance can depend on:
 
-Generate Integrated Gradients explanations
-
-Generate attention-rollout explanations
-
-Perform perturbation-faithfulness testing
-
-Conduct subgroup analysis
-
-Compare against external pathogenicity predictors
-
-Generate publication tables and figures
-
-37. Hardware
-
-The intended full-scale implementation is suitable for CUDA-enabled GPU execution. The research configuration was designed around a GPU-class workstation comparable to an NVIDIA RTX 3090 with 24 GB GPU memory. Smaller configurations and synthetic experiments can be executed using lower-memory GPUs or CPU environments by reducing batch size and sequence/model dimensions.
-
-38. Important Scientific Note
-
-The objective of the repository is to implement the VariantExplainAI methodology reproducibly. Reported performance values from a research manuscript should not be assumed to be reproduced automatically.
-
-ClinVar release
-
-Filtering results
-
-Variant normalization
-
-Reference-genome consistency
-
-Training environment
-
-External predictor coverage
-
-Randomness and deterministic-operation support
+* ClinVar release
+* Filtering results
+* Variant normalization
+* Reference-genome consistency
+* Training environment
+* External predictor coverage
+* Randomness
+* Deterministic-operation support
 
 Users should generate experimental results from their own processed dataset and retained test predictions.
 
-39. Implementation Philosophy
+---
 
-A major design principle of VariantExplainAI is:
+# Implementation Philosophy
 
-The model should learn the effect of the specific REF-to-ALT transformation rather than merely memorizing genomic loci.
+A central design principle of VariantExplainAI is:
 
-Therefore, careful validation of allele normalization, reference consistency, alternate-haplotype construction, and dataset leakage should be completed before interpreting final model performance.
+> **The model should learn the effect of the specific REF-to-ALT transformation rather than merely memorizing genomic loci.**
 
-40. Citation
+Therefore, careful validation of the following should be completed before interpreting final model performance:
 
-If you use this implementation in academic work, please cite the corresponding VariantExplainAI research article.
+* Allele normalization
+* Reference consistency
+* Alternate-haplotype construction
+* Dataset leakage
 
+---
+
+# Citation
+
+If you use VariantExplainAI in academic work, please cite the corresponding research article.
+
+```bibtex
 @article{variantExplainAI,
-   title   = {VariantExplainAI: An Explainability-Driven k-Mer CNN-Sparse Transformer Framework for ClinVar-Based Pathogenicity Prediction},
-   author  = {Authors},
-   journal = {Journal},
-   year    = {Year}
- }
+  title   = {VariantExplainAI: An Explainability-Driven k-Mer CNN-Sparse Transformer Framework for ClinVar-Based Pathogenicity Prediction},
+  author  = {Authors},
+  journal = {Journal},
+  year    = {Year}
+}
+```
 
-Replace the bibliographic information after publication.
+> Replace the placeholder bibliographic information after publication.
 
-41. License
+---
 
-Add the appropriate project license before public release. Common choices for academic research software include MIT License, Apache License 2.0, and BSD 3-Clause License. The selected license should be included in a separate LICENSE file.
+# License
+
+Add the appropriate project license before public release.
+
+Common choices for academic research software include:
+
+* MIT License
+* Apache License 2.0
+* BSD 3-Clause License
+
+The selected license should be included in a separate:
+
+```text
+LICENSE
+```
+
+file.
+
+---
+
+# Disclaimer
+
+VariantExplainAI is a **research and experimental framework** for genomic variant pathogenicity prediction.
+
+The predictions and explanations generated by this software should not be considered medical diagnoses or clinical recommendations.
+
+Users are responsible for validating datasets, experimental results, genomic references, and model outputs before using the framework in research or other applications.
