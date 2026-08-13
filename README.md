@@ -617,7 +617,7 @@ This regularization encourages the model to use biologically plausible variant-c
 ## 1. Clone the Repository
 
 ```bash
-git clone <[repository-url](https://github.com/srinivas-1244/VariantExplainAI/blob/main/README.md)>
+git clone <[[repository-url](https://github.com/srinivas-1244/VariantExplainAI/blob/main/README.md](https://github.com/srinivas-1244/VariantExplainAI))>
 cd VariantExplainAI
 ```
 
