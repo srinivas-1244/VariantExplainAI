@@ -1182,9 +1182,7 @@ If you use VariantExplainAI in academic work, please cite the corresponding rese
 ```bibtex
 @article{variantExplainAI,
   title   = {VariantExplainAI: An Explainability-Driven k-Mer CNN-Sparse Transformer Framework for ClinVar-Based Pathogenicity Prediction},
-  author  = {Authors},
-  journal = {Journal},
-  year    = {Year}
+  
 }
 ```
 
