@@ -8,6 +8,92 @@ An Explainability-Driven k-Mer CNN-Sparse Transformer Framework for ClinVar-Base
 
 VariantExplainAI is a research-oriented deep learning framework for allele-specific genomic variant pathogenicity prediction using ClinVar data.
 
+Table of Contents
+
+Overview
+
+Proposed Architecture
+
+Main Contributions
+
+Repository Structure
+
+Dataset
+
+Required Genomic Resources
+
+Data Preprocessing
+
+Reference and Alternate Haplotype Construction
+
+k-mer Tokenization
+
+Allele-Aware Representation
+
+VarMotif-TransNet
+
+Pathogenicity Classification
+
+Training Objective
+
+Explainability
+
+Explanation Alignment
+
+Training Configuration
+
+Installation
+
+Main Dependencies
+
+Configuration
+
+Dataset Preparation
+
+Training VariantExplainAI
+
+Model Outputs
+
+Performance Metrics
+
+Baseline Experiments
+
+Ablation Experiments
+
+Gene-Wise Generalization
+
+Temporal Generalization
+
+Class-Imbalance Experiments
+
+Explainability Analysis
+
+Perturbation Faithfulness
+
+Statistical Testing
+
+Variant Subgroup Evaluation
+
+Comparison with Established Predictors
+
+Reproducibility
+
+Synthetic Smoke Testing
+
+Recommended Full Experimental Workflow
+
+Hardware
+
+Important Scientific Note
+
+Implementation Philosophy
+
+Citation
+
+License
+
+Disclaimer
+
 1. Overview
 
 VariantExplainAI is a research-oriented deep learning framework for allele-specific genomic variant pathogenicity prediction using ClinVar data. The implementation combines paired reference/alternate haplotype modeling, overlapping k-mer sequence representation, convolutional motif extraction, sparse transformer-based long-range contextual learning, and explainability-guided optimization.
@@ -106,38 +192,127 @@ The framework additionally generates token-level explanations using Integrated G
 
 4. Repository Structure
 
+The repository is organized into configuration, data, source-code, experiment, output, and testing components:
+
 VariantExplainAI/
- │
- ├── configs/
- │   └── config.yaml
- ├── data/
- │   ├── raw/
- │   │   ├── clinvar/
- │   │   ├── grch38/
- │   │   └── gencode/
- │   ├── processed/
- │   └── splits/
- ├── src/
- │   ├── data/
- │   ├── models/
- │   ├── explainability/
- │   ├── training/
- │   ├── evaluation/
- │   └── utils/
- ├── experiments/
- │   ├── train_main.py
- │   ├── train_baselines.py
- │   ├── run_ablation.py
- │   ├── run_gene_holdout.py
- │   ├── run_temporal_holdout.py
- │   ├── run_imbalance.py
- │   ├── run_explainability.py
- │   └── run_perturbation.py
- ├── outputs/
- ├── tests/
- ├── requirements.txt
- ├── IMPLEMENTATION_NOTES.md
- └── README.md
+│
+├── configs/
+│   └── config.yaml
+│
+├── data/
+│   ├── raw/
+│   │   ├── clinvar/
+│   │   ├── grch38/
+│   │   └── gencode/
+│   ├── processed/
+│   └── splits/
+│
+├── src/
+│   ├── data/
+│   ├── models/
+│   ├── explainability/
+│   ├── training/
+│   ├── evaluation/
+│   └── utils/
+│
+├── experiments/
+│   ├── train_main.py
+│   ├── train_baselines.py
+│   ├── run_ablation.py
+│   ├── run_gene_holdout.py
+│   ├── run_temporal_holdout.py
+│   ├── run_imbalance.py
+│   ├── run_explainability.py
+│   └── run_perturbation.py
+│
+├── outputs/
+├── tests/
+│
+├── requirements.txt
+├── IMPLEMENTATION_NOTES.md
+└── README.md
+
+Directory Description
+
+Directory / File
+
+Purpose
+
+configs/
+
+Stores experiment and model configuration files.
+
+configs/config.yaml
+
+Main configuration for sequence processing, model architecture, and training.
+
+data/raw/clinvar/
+
+Raw ClinVar variant resources.
+
+data/raw/grch38/
+
+GRCh38 reference genome resources.
+
+data/raw/gencode/
+
+GENCODE GRCh38 annotation resources.
+
+data/processed/
+
+Preprocessed and normalized datasets.
+
+data/splits/
+
+Stored train, validation, and test partitions.
+
+src/data/
+
+Data loading, filtering, normalization, tokenization, and preprocessing modules.
+
+src/models/
+
+VarMotif-TransNet and related model implementations.
+
+src/explainability/
+
+Integrated Gradients, attention rollout, attribution alignment, and explanation utilities.
+
+src/training/
+
+Training loops, losses, optimization, checkpointing, and scheduling.
+
+src/evaluation/
+
+Evaluation metrics and analysis utilities.
+
+src/utils/
+
+Shared helper functions and utilities.
+
+experiments/
+
+Executable scripts for training, baselines, ablations, holdout studies, imbalance analysis, explainability, and perturbation experiments.
+
+outputs/
+
+Generated checkpoints, predictions, metrics, figures, and logs.
+
+tests/
+
+Software and pipeline tests.
+
+requirements.txt
+
+Python dependencies.
+
+IMPLEMENTATION_NOTES.md
+
+Additional implementation and research notes.
+
+README.md
+
+Project documentation.
 
 5. Dataset
 
